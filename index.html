@@ -346,15 +346,28 @@
         }
         
         /** * Dispara o evento de clique no GA4 e, em seguida, redireciona o usuário. */
-        function trackAndRedirect(link_destino, elemento_clicado) {
+        function trackAndRedirect(link_destino, elemento_clicado, nome_botao) {
             
             if (typeof gtag === 'function') {
+                // EVENTO PRINCIPAL - otimizado para GA4
+                gtag('event', 'clique_botao_afiliado', {
+                    'event_category': 'engajamento',
+                    'event_label': nome_botao,
+                    'botao_clicado': nome_botao,
+                    'tipo_elemento': elemento_clicado,
+                    'link_destino': link_destino
+                });
+                
+                // EVENTO SECUNDÁRIO - para compatibilidade
                 gtag('event', 'afiliado_clique_saida', {
                     'categoria_afiliado': 'link_saida',
-                    // NOVO PARÂMETRO COM NOME EXCLUSIVO PARA O GA4
-                    'bugi_source_01': elemento_clicado 
+                    'bugi_source_01': elemento_clicado,
+                    'nome_botao': nome_botao
                 });
             }
+            
+            // Debug no console
+            console.log(`Botão clicado: ${nome_botao} | Tipo: ${elemento_clicado}`);
             
             setTimeout(() => {
                 window.open(link_destino, '_blank');
@@ -362,11 +375,20 @@
         }
         
         function handleCTAClick() {
-            trackAndRedirect(GLOBAL_REDIRECT_URL, 'cta_principal');
+            trackAndRedirect(GLOBAL_REDIRECT_URL, 'cta_principal', 'Botão Principal - Cupom');
         }
         
         function handleCardClick(marketplace) {
-            trackAndRedirect(GLOBAL_REDIRECT_URL, 'card_' + marketplace);
+            const nomesBotao = {
+                'amazon': 'Amazon',
+                'mercadolivre': 'Mercado Livre', 
+                'shopee': 'Shopee',
+                'shein': 'SHEIN',
+                'magalu': 'Magazine Luiza'
+            };
+            
+            const nomeBotao = nomesBotao[marketplace] || marketplace;
+            trackAndRedirect(GLOBAL_REDIRECT_URL, 'card_marketplace', nomeBotao);
         }
         
         function getVideoId(url) {
