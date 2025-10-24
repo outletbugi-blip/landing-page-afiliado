@@ -272,14 +272,49 @@
         const VIDEO_START_DELAY = 1000; 
         
         // =======================================================
-        // ⚙️ FUNÇÕES DE CLIQUE, RASTREAMENTO E VÍDEO MANUAL ⚙️
+        // ⚙️ CORREÇÃO DA DUPLICAÇÃO - SÓ ISSO MUDA! ⚙️
         // =======================================================
 
-        /** * Inicia o vídeo (sem mute) e remove o overlay (chamado ao CLICAR no overlay de Play). */
+        // VARIÁVEL PARA BLOQUEAR CLIQUES DUPLICADOS
+        let cliqueBloqueado = false;
+
+        /** * Dispara o evento de clique no GA4 SEM DUPLICAÇÃO */
+        function trackAndRedirect(link_destino, elemento_clicado, nome_botao) {
+            
+            // BLOQUEIA CLIQUES DUPLICADOS
+            if (cliqueBloqueado) {
+                console.log('🛑 Clique bloqueado - evita duplicação');
+                return;
+            }
+            
+            cliqueBloqueado = true;
+            
+            // APENAS 1 EVENTO - SEM DUPLICAÇÃO
+            if (typeof gtag === 'function') {
+                gtag('event', 'clique_botao_afiliado', {
+                    'event_category': 'engajamento',
+                    'event_label': nome_botao,
+                    'botao_clicado': nome_botao,
+                    'tipo_elemento': elemento_clicado,
+                    'link_destino': link_destino
+                });
+            }
+            
+            console.log(`✅ CLIQUE ÚNICO: ${nome_botao} | Tipo: ${elemento_clicado}`);
+            
+            setTimeout(() => {
+                window.open(link_destino, '_blank');
+                // LIBERA PARA NOVOS CLIQUES APÓS 1 SEGUNDO
+                setTimeout(() => { cliqueBloqueado = false; }, 1000);
+            }, 100); 
+        }
+        
+        // =======================================================
+        // 🎥 SEU CÓDIGO ORIGINAL DO VÍDEO - INTACTO! 🎥
+        // =======================================================
+
         function playVideoWithAudio(containerId, videoId) {
             const container = document.getElementById(containerId);
-            
-            // Recarrega o iframe sem o mute=1 e com autoplay=1
             container.innerHTML = `
                 <iframe 
                     src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1" 
@@ -291,14 +326,12 @@
             `;
         }
         
-        /** * Cria e insere o iframe do vídeo com autoplay MUDO. */
         function renderVideoAutoplay(containerId) {
             const container = document.getElementById(containerId);
             const videoId = getVideoId(YOUTUBE_VIDEO_URL);
 
             if (videoId) {
-                // 1. Renderiza o IFRAME com autoplay e mudo (mute=1)
-                 container.innerHTML = `
+                container.innerHTML = `
                     <iframe 
                         src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&enablejsapi=1" 
                         title="Vídeo do YouTube" 
@@ -307,64 +340,33 @@
                         allowfullscreen>
                     </iframe>
                 `;
-                // 2. Insere o overlay de Play para ligar o áudio
                 insertPlayOverlay(containerId, videoId);
-
             } else {
                 container.innerHTML = `<div class="video-placeholder"><p class="font-bold text-lg text-red-500">ERRO: Link do Vídeo Inválido</p></div>`;
             }
         }
         
-        /** * Cria e insere o overlay de PLAY/Áudio sobre o iframe. */
         function insertPlayOverlay(containerId, videoId) {
             const container = document.getElementById(containerId);
-            
             let overlay = document.createElement('div');
             overlay.className = `play-overlay`;
-            
             overlay.innerHTML = `
                 <svg class="play-button-icon w-20 h-20" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14zM10 9l4 3-4 3V9z"/>
                 </svg>
                 <p class="text-white text-lg mt-3 font-semibold">Clique para Assistir com Áudio</p>
             `;
-            
             overlay.onclick = () => {
                 playVideoWithAudio(containerId, videoId); 
-                
-                 if (typeof gtag === 'function') {
+                if (typeof gtag === 'function') {
                     gtag('event', 'video_play_audio', {
                         'origem': containerId
                     });
                 }
             };
-            
             setTimeout(() => {
-                 container.appendChild(overlay);
+                container.appendChild(overlay);
             }, 500); 
-           
-        }
-        
-        /** * Dispara o evento de clique no GA4 e, em seguida, redireciona o usuário. */
-        function trackAndRedirect(link_destino, elemento_clicado, nome_botao) {
-            
-            if (typeof gtag === 'function') {
-                // APENAS 1 EVENTO - SEM DUPLICAÇÃO
-                gtag('event', 'clique_botao_afiliado', {
-                    'event_category': 'engajamento',
-                    'event_label': nome_botao,
-                    'botao_clicado': nome_botao,
-                    'tipo_elemento': elemento_clicado,
-                    'link_destino': link_destino
-                });
-            }
-            
-            // Debug no console - APENAS 1 MENSAGEM
-            console.log(`✅ ÚNICO clique: ${nome_botao} | Tipo: ${elemento_clicado}`);
-            
-            setTimeout(() => {
-                window.open(link_destino, '_blank');
-            }, 100); 
         }
         
         function handleCTAClick() {
@@ -379,7 +381,6 @@
                 'shein': 'SHEIN',
                 'magalu': 'Magazine Luiza'
             };
-            
             const nomeBotao = nomesBotao[marketplace] || marketplace;
             trackAndRedirect(GLOBAL_REDIRECT_URL, 'card_marketplace', nomeBotao);
         }
@@ -393,7 +394,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             renderVideoAutoplay('videoContainer');
             renderVideoAutoplay('videoContainerMobile');
-
             document.getElementById('ctaTextDesktop').textContent = CTA_BUTTON_TEXT;
             document.getElementById('ctaTextMobile').textContent = CTA_BUTTON_TEXT;
         });
