@@ -349,7 +349,7 @@
         function trackAndRedirect(link_destino, elemento_clicado, nome_botao) {
             
             if (typeof gtag === 'function') {
-                // EVENTO PRINCIPAL - otimizado para GA4
+                // APENAS 1 EVENTO - SEM DUPLICAÇÃO
                 gtag('event', 'clique_botao_afiliado', {
                     'event_category': 'engajamento',
                     'event_label': nome_botao,
@@ -357,17 +357,10 @@
                     'tipo_elemento': elemento_clicado,
                     'link_destino': link_destino
                 });
-                
-                // EVENTO SECUNDÁRIO - para compatibilidade
-                gtag('event', 'afiliado_clique_saida', {
-                    'categoria_afiliado': 'link_saida',
-                    'bugi_source_01': elemento_clicado,
-                    'nome_botao': nome_botao
-                });
             }
             
-            // Debug no console
-            console.log(`Botão clicado: ${nome_botao} | Tipo: ${elemento_clicado}`);
+            // Debug no console - APENAS 1 MENSAGEM
+            console.log(`✅ ÚNICO clique: ${nome_botao} | Tipo: ${elemento_clicado}`);
             
             setTimeout(() => {
                 window.open(link_destino, '_blank');
