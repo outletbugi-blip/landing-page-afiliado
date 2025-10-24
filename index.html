@@ -57,13 +57,13 @@
             border-radius: 10px;
         }
         
-        /* NOVO CSS: Aviso de Áudio Flutuante */
+        /* CSS: Aviso de Áudio Flutuante (POSIÇÃO AJUSTADA para 60%) */
         .audio-notice {
             position: absolute;
-            top: 50%;
+            top: 60%; /* Ajustado para mover para baixo */
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 10; /* Fica acima do iframe */
+            z-index: 10; 
             background-color: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 1rem 1.5rem;
@@ -74,8 +74,8 @@
             cursor: pointer;
             transition: opacity 0.5s ease-out;
         }
-
-        /* Estilos dos Cards (inalterados) */
+        
+        /* O restante do CSS para Cards e CTA permanece o mesmo */
         .card-hover {
             transition: all 0.3s ease;
             cursor: pointer;
@@ -86,7 +86,6 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
         
-        /* Estilos do Botão CTA (inalterados) */
         .cta-button {
             background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             transition: all 0.3s ease;
@@ -116,7 +115,6 @@
                 0 0 0 4px rgba(249, 115, 22, 0.2);
         }
         
-        /* Estilos do Texto CTA (inalterados) */
         .cta-text {
             display: inline-block;
         }
@@ -134,14 +132,7 @@
                 </div>
                 
                 <div class="video-container mb-4" id="videoContainer">
-                    <div class="audio-notice text-xl" onclick="hideAudioNotice('videoContainer')">
-                        Clique para Ativar o Áudio 🔊
                     </div>
-                    <div class="video-placeholder">
-                        <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
-                        <p class="font-semibold text-lg">Carregando vídeo...</p>
-                    </div>
-                </div>
                 
                 <div class="text-center">
                     <button class="cta-button text-white font-bold py-5 px-10 rounded-full text-3xl shadow-lg" onclick="handleCTAClick()">
@@ -192,14 +183,7 @@
             </div>
             
             <div class="video-container mb-4" id="videoContainerMobile">
-                 <div class="audio-notice text-lg" onclick="hideAudioNotice('videoContainerMobile')">
-                    Toque para Ativar o Áudio 🔊
-                </div>
-                <div class="video-placeholder">
-                    <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
-                    <p class="font-semibold text-lg">Carregando vídeo...</p>
-                </div>
-            </div>
+                 </div>
             
             <div class="text-center mb-8">
                 <button class="cta-button text-white font-bold py-5 px-8 rounded-full text-2xl shadow-lg w-full sm:w-auto" onclick="handleCTAClick()">
@@ -257,14 +241,17 @@
         // 3. LINK DE REDIRECIONAMENTO ÚNICO PARA TODOS OS BOTÕES E CARDS (Instagram)
         const GLOBAL_REDIRECT_URL = 'https://ig.me/j/AbbSr4goZgZAnZsP/';
         
-        // 4. TEMPO PARA O AVISO DE ÁUDIO DESAPARECER (em milissegundos)
-        const AUDIO_NOTICE_TIMEOUT = 5000; // 5 segundos
+        // 4. TEMPO PARA O AVISO DE ÁUDIO DESAPARECER (AJUSTADO: 2 segundos)
+        const AUDIO_NOTICE_TIMEOUT = 2000; 
+        
+        // 5. TEMPO DE ATRASO PARA O VÍDEO INICIAR (AJUSTADO: 3 segundos)
+        const VIDEO_START_DELAY = 3000; 
         
         // =======================================================
         // ⚙️ FUNÇÕES DE CLIQUE, RASTREAMENTO E ÁUDIO ⚙️
         // =======================================================
 
-        /** * Oculta o aviso de áudio. */
+        /** * Oculta o aviso de áudio (usado ao clicar ou no timeout). */
         function hideAudioNotice(containerId) {
             const container = document.getElementById(containerId);
             const notice = container.querySelector('.audio-notice');
@@ -272,14 +259,45 @@
                 notice.style.opacity = '0';
                 setTimeout(() => {
                     notice.style.display = 'none';
-                }, 500); // Espera a transição de opacidade
+                }, 500);
             }
         }
         
+        /** * Cria e insere o aviso de áudio sobre o vídeo. */
+        function insertAudioNotice(containerId) {
+            const container = document.getElementById(containerId);
+            const isMobile = containerId.includes('Mobile');
+            
+            let notice = container.querySelector('.audio-notice');
+            
+            // Se o aviso não existe, cria ele
+            if (!notice) {
+                notice = document.createElement('div');
+                notice.className = `audio-notice ${isMobile ? 'text-lg' : 'text-xl'}`;
+                notice.textContent = isMobile ? 'Toque para Ativar o Áudio 🔊' : 'Clique para Ativar o Áudio 🔊';
+                
+                // Adiciona o evento de clique para sumir o aviso
+                notice.onclick = () => {
+                    hideAudioNotice(containerId);
+                };
+                
+                container.appendChild(notice);
+            }
+            
+            // Garante que o aviso está visível para o timeout
+            notice.style.display = 'block';
+            notice.style.opacity = '1';
+
+            // Faz o aviso sumir após o timeout
+            setTimeout(() => {
+                hideAudioNotice(containerId);
+            }, AUDIO_NOTICE_TIMEOUT);
+        }
+
         /** * Dispara o evento de clique no GA4 e, em seguida, redireciona o usuário. */
         function trackAndRedirect(link_destino, elemento_clicado) {
             
-            // 1. DISPARA O EVENTO NO GOOGLE ANALYTICS
+            // 1. DISPARA O EVENTO NO GOOGLE ANALYTICS (usa a função gtag() do <head>)
             if (typeof gtag === 'function') {
                 gtag('event', 'afiliado_clique_saida', {
                     'categoria_afiliado': 'link_saida',
@@ -310,51 +328,65 @@
             return match ? match[1] : null;
         }
         
-        function renderVideo(containerId, url) {
+        /** * Cria e insere o placeholder inicial e o aviso de áudio (ANTES do vídeo). */
+        function renderInitialPlaceholder(containerId) {
             const container = document.getElementById(containerId);
-            const videoId = getVideoId(url);
             
-            if (videoId) {
-                // Remove o aviso de áudio que está no HTML, se ele existir
-                const audioNotice = container.querySelector('.audio-notice');
-                if (audioNotice) {
-                    audioNotice.remove();
-                }
+            // HTML do Placeholder (O vídeo começará em instantes)
+            container.innerHTML = `
+                <div class="video-placeholder">
+                    <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
+                    <p class="font-semibold text-lg">O vídeo começará em instantes...</p>
+                </div>
+            `;
 
-                // Injeta o iframe, que é o que o usuário vai interagir
-                container.innerHTML = `
-                    <div class="audio-notice text-lg" onclick="hideAudioNotice('${containerId}')">
-                        ${containerId.includes('Mobile') ? 'Toque para Ativar o Áudio 🔊' : 'Clique para Ativar o Áudio 🔊'}
-                    </div>
-                    <iframe 
-                        src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&enablejsapi=1" 
-                        title="Vídeo do YouTube" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                `;
-            } else {
-                container.innerHTML = `
-                    <div class="video-placeholder">
-                        <svg class="w-12 h-12 mx-auto mb-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                        <p class="font-bold text-lg text-red-500">ERRO: Link do Vídeo Inválido</p>
-                        <p class="text-sm">O vídeo não pôde ser carregado.</p>
-                    </div>
-                `;
-            }
+            // Insere o aviso de áudio sobre o placeholder
+            insertAudioNotice(containerId);
+        }
+        
+        /** * Carrega e injeta o iframe do YouTube (APÓS o delay). */
+        function loadAndPlayVideo(containerId, videoId) {
+            const container = document.getElementById(containerId);
             
-            // Ativa o timeout para sumir o aviso
-            setTimeout(() => {
-                hideAudioNotice(containerId);
-            }, AUDIO_NOTICE_TIMEOUT);
+            // Injeta o iframe, substituindo o placeholder
+            container.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&enablejsapi=1" 
+                    title="Vídeo do YouTube" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            `;
 
+            // O aviso de áudio precisa ser reinserido, pois innerHTML remove tudo.
+            // O timer para ele sumir já está rodando (AUDIO_NOTICE_TIMEOUT), mas 
+            // garantimos que ele está lá caso o vídeo comece antes do aviso sumir.
+            insertAudioNotice(containerId);
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            renderVideo('videoContainer', YOUTUBE_VIDEO_URL);
-            renderVideo('videoContainerMobile', YOUTUBE_VIDEO_URL);
             
+            const videoId = getVideoId(YOUTUBE_VIDEO_URL);
+            
+            if (videoId) {
+                // 1. CONFIGURAÇÃO INICIAL: Mostra o Placeholder e o Aviso de Áudio Imediatamente.
+                renderInitialPlaceholder('videoContainer');
+                renderInitialPlaceholder('videoContainerMobile');
+                
+                // 2. AGENDA O VÍDEO PARA INICIAR APÓS O DELAY (3 segundos)
+                setTimeout(() => {
+                    loadAndPlayVideo('videoContainer', videoId);
+                    loadAndPlayVideo('videoContainerMobile', videoId);
+                }, VIDEO_START_DELAY);
+
+            } else {
+                // Mensagem de Erro (se o link estiver inválido)
+                document.getElementById('videoContainer').innerHTML = `<div class="video-placeholder"><svg class="w-12 h-12 mx-auto mb-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg><p class="font-bold text-lg text-red-500">ERRO: Link do Vídeo Inválido</p><p class="text-sm">O vídeo não pôde ser carregado.</p></div>`;
+                document.getElementById('videoContainerMobile').innerHTML = document.getElementById('videoContainer').innerHTML;
+            }
+
+            // Define o texto dos botões CTA
             document.getElementById('ctaTextDesktop').textContent = CTA_BUTTON_TEXT;
             document.getElementById('ctaTextMobile').textContent = CTA_BUTTON_TEXT;
         });
