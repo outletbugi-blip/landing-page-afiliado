@@ -1,6 +1,328 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clube de Descontos BugiClub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        /* Estilos do Container de Vídeo e Placeholder */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* Proporção 16:9 */
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px dashed #9ca3af;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; 
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #6b7280;
+            padding: 20px;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        
+        /* Estilos dos Cards */
+        .card-hover {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Estilos do Botão CTA (Call to Action) */
+        .cta-button {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 4px solid #f97316;
+            box-shadow: 
+                0 8px 0 #d97706,
+                0 12px 20px rgba(249, 115, 22, 0.4),
+                0 0 0 6px rgba(249, 115, 22, 0.2);
+            transform: translateY(-4px);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 12px 0 #d97706,
+                0 20px 30px rgba(249, 115, 22, 0.5),
+                0 0 0 8px rgba(249, 115, 22, 0.3);
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        }
+        
+        .cta-button:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 
+                0 4px 0 #d97706,
+                0 8px 15px rgba(249, 115, 22, 0.4),
+                0 0 0 4px rgba(249, 115, 22, 0.2);
+        }
+        
+        /* Estilos do Texto CTA */
+        .cta-text {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full">
+    <main class="container mx-auto px-4 py-8">
+        <div class="hidden lg:flex lg:gap-8 lg:items-start">
+            <div class="lg:w-2/3">
+                <div class="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-xl p-4 mb-4 shadow-lg border-2 border-yellow-400 animate-pulse">
+                    <div class="text-center">
+                        <div class="text-white font-bold text-xl mb-1">🎟️ SÓ COM O BUGICLUB DE DESCONTOS</div>
+                        <div class="text-yellow-100 font-semibold text-lg">VOCÊ TEM CUPONS DIÁRIOS E OFERTAS DE ATÉ 60% DE DESCONTOS</div>
+                    </div>
+                </div>
+                
+                <div class="video-container mb-4" id="videoContainer">
+                    <div class="video-placeholder">
+                        <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
+                        <p class="font-semibold text-lg">Carregando vídeo...</p>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button class="cta-button text-white font-bold py-5 px-10 rounded-full text-3xl shadow-lg" onclick="handleCTAClick()">
+                        <span id="ctaTextDesktop" class="cta-text"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="lg:w-1/3 space-y-4">
+                <div class="card-hover bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl p-6 shadow-md border border-gray-300" onclick="handleCardClick('amazon')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-2xl">amazon</div>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-xl p-6 shadow-md border border-yellow-300" onclick="handleCardClick('mercadolivre')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-blue-800 font-bold text-xl">Mercado Livre</div>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-6 shadow-md border border-red-300 ring-4 ring-red-400/50" onclick="handleCardClick('shopee')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-2xl">Shopee 🌟</div>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-gradient-to-r from-black to-gray-900 rounded-xl p-6 shadow-md border border-gray-400" onclick="handleCardClick('shein')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-2xl">SHEIN</div>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 shadow-md border border-blue-300" onclick="handleCardClick('magalu')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-xl">Magalu</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="lg:hidden">
+            <div class="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-xl p-4 mb-4 shadow-lg border-2 border-yellow-400 animate-pulse">
+                <div class="text-center">
+                    <div class="text-white font-bold text-lg mb-1">🎟️ SÓ COM O BUGICLUB DE DESCONTOS</div>
+                    <div class="text-yellow-100 font-semibold text-base">VOCÊ TEM CUPONS DIÁRIOS E OFERTAS DE ATÉ 60% DE DESCONTOS</div>
+                </div>
+            </div>
+            
+            <div class="video-container mb-4" id="videoContainerMobile">
+                <div class="video-placeholder">
+                    <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
+                    <p class="font-semibold text-lg">Carregando vídeo...</p>
+                </div>
+            </div>
+            
+            <div class="text-center mb-8">
+                <button class="cta-button text-white font-bold py-5 px-8 rounded-full text-2xl shadow-lg w-full sm:w-auto" onclick="handleCTAClick()">
+                    <span id="ctaTextMobile" class="cta-text"></span>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="card-hover bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl p-4 shadow-md border border-gray-300" onclick="handleCardClick('amazon')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-lg">amazon</div>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-xl p-4 shadow-md border border-yellow-300" onclick="handleCardClick('mercadolivre')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-blue-800 font-bold text-sm">Mercado Livre</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-3">
+                <div class="card-hover bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-4 shadow-md border border-red-300 ring-4 ring-red-400/50" onclick="handleCardClick('shopee')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-sm">Shopee 🌟</div>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-gradient-to-r from-black to-gray-900 rounded-xl p-4 shadow-md border border-gray-400" onclick="handleCardClick('shein')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-sm">SHEIN</div>
+                    </div>
+                </div>
+                
+                <div class="card-hover bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-4 shadow-md border border-blue-300" onclick="handleCardClick('magalu')">
+                    <div class="flex items-center justify-center">
+                        <div class="text-white font-bold text-xs">Magalu</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // =======================================================
+        // 🚨 CONFIGURAÇÃO DA CAMPANHA E RASTREAMENTO 🚨
+        // =======================================================
+        
+        // ⚠️ 1. ID DE MEDIÇÃO DO GOOGLE ANALYTICS (BugiCorp/BugiClub)
+        const GA_TRACKING_ID = 'G-HJ47N8ZWHG'; 
+        
+        // 2. LINK DO VÍDEO NO YOUTUBE
+        const YOUTUBE_VIDEO_URL = 'https://youtube.com/shorts/FpK3aztWTLU'; 
+        
+        // 3. TEXTO QUE APARECERÁ NO BOTÃO DE CHAMADA PARA AÇÃO (CTA)
+        const CTA_BUTTON_TEXT = 'Quero meu cupom de Desconto AGORA!';
+        
+        // 4. LINK DE REDIRECIONAMENTO ÚNICO PARA TODOS OS BOTÕES E CARDS (Instagram)
+        const GLOBAL_REDIRECT_URL = 'https://ig.me/j/AbbSr4goZgZAnZsP/';
+        
+        // =======================================================
+        // ⚙️ INICIALIZAÇÃO DO GOOGLE ANALYTICS (GA4) ⚙️
+        // =======================================================
+        if (GA_TRACKING_ID && GA_TRACKING_ID !== 'G-XXXXXXXXXX') {
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer',GA_TRACKING_ID);
+
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', GA_TRACKING_ID);
+        }
+
+        // =======================================================
+        // ⚙️ FUNÇÕES DE CLIQUE E RASTREAMENTO ⚙️
+        // =======================================================
+        
+        /** * Dispara o evento de clique no GA4 e, em seguida, redireciona o usuário.
+         * O evento 'afiliado_clique_saida' será enviado ao GA4 com o elemento clicado.
+         */
+        function trackAndRedirect(link_destino, elemento_clicado) {
+            
+            // 1. DISPARA O EVENTO NO GOOGLE ANALYTICS
+            if (typeof gtag === 'function') {
+                gtag('event', 'afiliado_clique_saida', {
+                    'categoria_afiliado': 'link_saida',
+                    'elemento_clicado': elemento_clicado // Ex: 'cta_principal', 'card_shopee'
+                });
+            }
+            
+            // 2. REDIRECIONA APÓS UM PEQUENO ATRASO (100ms para garantir o disparo do GA4)
+            setTimeout(() => {
+                window.open(link_destino, '_blank');
+            }, 100); 
+        }
+        
+        function handleCTAClick() {
+            trackAndRedirect(GLOBAL_REDIRECT_URL, 'cta_principal');
+        }
+        
+        function handleCardClick(marketplace) {
+            trackAndRedirect(GLOBAL_REDIRECT_URL, 'card_' + marketplace);
+        }
+        
+        // ----------------------------------------------------
+        // FUNÇÕES DE CARREGAMENTO DO VÍDEO E INICIALIZAÇÃO
+        // ----------------------------------------------------
+        function getVideoId(url) {
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+        
+        function renderVideo(containerId, url) {
+            const container = document.getElementById(containerId);
+            const videoId = getVideoId(url);
+            
+            if (videoId) {
+                container.innerHTML = `
+                    <iframe 
+                        src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}" 
+                        title="Vídeo do YouTube" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="video-placeholder">
+                        <svg class="w-12 h-12 mx-auto mb-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                        <p class="font-bold text-lg text-red-500">ERRO: Link do Vídeo Inválido</p>
+                        <p class="text-sm">O vídeo não pôde ser carregado.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            renderVideo('videoContainer', YOUTUBE_VIDEO_URL);
+            renderVideo('videoContainerMobile', YOUTUBE_VIDEO_URL);
+            
+            document.getElementById('ctaTextDesktop').textContent = CTA_BUTTON_TEXT;
+            document.getElementById('ctaTextMobile').textContent = CTA_BUTTON_TEXT;
+        });
+    </script>
+</body>
+</html>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modelo Editável - Vídeo e Cards</title>
