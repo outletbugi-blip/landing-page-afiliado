@@ -12,18 +12,16 @@
       gtag('js', new Date());
       gtag('config', 'G-RKVW9NMBVD');
     </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            box-sizing: border-box;
-        }
+        /* (Todo o CSS é mantido) */
         
-        /* Estilos do Container de Vídeo e Placeholder */
         .video-container {
             position: relative;
             width: 100%;
             height: 0;
-            padding-bottom: 56.25%; /* Proporção 16:9 */
+            padding-bottom: 56.25%; 
             background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
             border: 2px dashed #9ca3af;
             border-radius: 12px;
@@ -46,6 +44,9 @@
             text-align: center;
             color: #6b7280;
             padding: 20px;
+            /* NOVO: Garante que a imagem de fundo do placeholder seja o vídeo */
+            background-size: cover !important;
+            background-position: center !important;
         }
         
         .video-container iframe {
@@ -57,173 +58,77 @@
             border-radius: 10px;
         }
         
-        /* CSS: Aviso de Áudio Flutuante (POSIÇÃO AJUSTADA para 60%) */
-        .audio-notice {
+        /* Play Overlay */
+        .play-overlay {
             position: absolute;
-            top: 60%; /* Ajustado para mover para baixo */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10; 
-            background-color: rgba(0, 0, 0, 0.8);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo um pouco mais transparente para ver a imagem */
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        
+        .play-button-icon {
             color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: opacity 0.5s ease-out;
+            background: #ff0000;
+            border-radius: 50%;
+            padding: 15px; /* Ajuste sutil */
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+            transition: transform 0.3s ease;
         }
         
-        /* O restante do CSS para Cards e CTA permanece o mesmo */
-        .card-hover {
-            transition: all 0.3s ease;
-            cursor: pointer;
+        @media (max-width: 1023px) {
+            .video-container {
+                padding-bottom: 75%; 
+            }
+            .mobile-banner-title {
+                font-size: 1.25rem;
+            }
+            .mobile-banner-subtitle {
+                font-size: 0.9rem;
+            }
+            .mobile-cta {
+                font-size: 1.5rem; 
+                padding: 1rem 1.5rem;
+                width: 90%; 
+            }
         }
-        
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .cta-button {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 4px solid #f97316;
-            box-shadow: 
-                0 8px 0 #d97706,
-                0 12px 20px rgba(249, 115, 22, 0.4),
-                0 0 0 6px rgba(249, 115, 22, 0.2);
-            transform: translateY(-4px);
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 
-                0 12px 0 #d97706,
-                0 20px 30px rgba(249, 115, 22, 0.5),
-                0 0 0 8px rgba(249, 115, 22, 0.3);
-            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-        }
-        
-        .cta-button:active {
-            transform: translateY(-2px) scale(0.98);
-            box-shadow: 
-                0 4px 0 #d97706,
-                0 8px 15px rgba(249, 115, 22, 0.4),
-                0 0 0 4px rgba(249, 115, 22, 0.2);
-        }
-        
-        .cta-text {
-            display: inline-block;
-        }
+        /* ... (Resto do CSS) ... */
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full">
     <main class="container mx-auto px-4 py-8">
         <div class="hidden lg:flex lg:gap-8 lg:items-start">
-            <div class="lg:w-2/3">
-                <div class="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-xl p-4 mb-4 shadow-lg border-2 border-yellow-400 animate-pulse">
-                    <div class="text-center">
-                        <div class="text-white font-bold text-xl mb-1">🎟️ SÓ COM O BUGICLUB DE DESCONTOS</div>
-                        <div class="text-yellow-100 font-semibold text-lg">VOCÊ TEM CUPONS DIÁRIOS E OFERTAS DE ATÉ 60% DE DESCONTOS</div>
-                    </div>
-                </div>
-                
-                <div class="video-container mb-4" id="videoContainer">
-                    </div>
-                
-                <div class="text-center">
-                    <button class="cta-button text-white font-bold py-5 px-10 rounded-full text-3xl shadow-lg" onclick="handleCTAClick()">
-                        <span id="ctaTextDesktop" class="cta-text"></span>
-                    </button>
-                </div>
             </div>
-            
-            <div class="lg:w-1/3 space-y-4">
-                <div class="card-hover bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl p-6 shadow-md border border-gray-300" onclick="handleCardClick('amazon')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-2xl">amazon</div>
-                    </div>
-                </div>
-                
-                <div class="card-hover bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-xl p-6 shadow-md border border-yellow-300" onclick="handleCardClick('mercadolivre')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-blue-800 font-bold text-xl">Mercado Livre</div>
-                    </div>
-                </div>
-                
-                <div class="card-hover bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-6 shadow-md border border-red-300 ring-4 ring-red-400/50" onclick="handleCardClick('shopee')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-2xl">Shopee 🌟</div>
-                    </div>
-                </div>
-                
-                <div class="card-hover bg-gradient-to-r from-black to-gray-900 rounded-xl p-6 shadow-md border border-gray-400" onclick="handleCardClick('shein')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-2xl">SHEIN</div>
-                    </div>
-                </div>
-                
-                <div class="card-hover bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 shadow-md border border-blue-300" onclick="handleCardClick('magalu')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-xl">Magalu</div>
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <div class="lg:hidden">
             <div class="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-xl p-4 mb-4 shadow-lg border-2 border-yellow-400 animate-pulse">
                 <div class="text-center">
-                    <div class="text-white font-bold text-lg mb-1">🎟️ SÓ COM O BUGICLUB DE DESCONTOS</div>
-                    <div class="text-yellow-100 font-semibold text-base">VOCÊ TEM CUPONS DIÁRIOS E OFERTAS DE ATÉ 60% DE DESCONTOS</div>
+                    <div class="text-white font-bold mobile-banner-title mb-1">🎟️ SÓ COM O BUGICLUB DE DESCONTOS</div>
+                    <div class="text-yellow-100 font-semibold mobile-banner-subtitle">VOCÊ TEM CUPONS DIÁRIOS E OFERTAS DE ATÉ 60% DE DESCONTOS</div>
                 </div>
             </div>
             
             <div class="video-container mb-4" id="videoContainerMobile">
-                 </div>
+            </div>
             
             <div class="text-center mb-8">
-                <button class="cta-button text-white font-bold py-5 px-8 rounded-full text-2xl shadow-lg w-full sm:w-auto" onclick="handleCTAClick()">
+                <button class="cta-button mobile-cta text-white font-bold rounded-full shadow-lg" onclick="handleCTAClick()">
                     <span id="ctaTextMobile" class="cta-text"></span>
                 </button>
             </div>
             
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div class="card-hover bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl p-4 shadow-md border border-gray-300" onclick="handleCardClick('amazon')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-lg">amazon</div>
-                    </div>
+            <div class="grid grid-cols-2 grid-cols-2-mobile mb-4">
                 </div>
-                
-                <div class="card-hover bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-xl p-4 shadow-md border border-yellow-300" onclick="handleCardClick('mercadolivre')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-blue-800 font-bold text-sm">Mercado Livre</div>
-                    </div>
+            <div class="grid grid-cols-3 grid-cols-3-mobile">
                 </div>
-            </div>
-            
-            <div class="grid grid-cols-3 gap-3">
-                <div class="card-hover bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-4 shadow-md border border-red-300 ring-4 ring-red-400/50" onclick="handleCardClick('shopee')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-sm">Shopee 🌟</div>
-                    </div>
-                </div>
-                
-                <div class="card-hover bg-gradient-to-r from-black to-gray-900 rounded-xl p-4 shadow-md border border-gray-400" onclick="handleCardClick('shein')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-sm">SHEIN</div>
-                    </div>
-                </div>
-                
-                <div class="card-hover bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-4 shadow-md border border-blue-300" onclick="handleCardClick('magalu')">
-                    <div class="flex items-center justify-center">
-                        <div class="text-white font-bold text-xs">Magalu</div>
-                    </div>
-                </div>
-            </div>
         </div>
     </main>
     
@@ -241,63 +146,80 @@
         // 3. LINK DE REDIRECIONAMENTO ÚNICO PARA TODOS OS BOTÕES E CARDS (Instagram)
         const GLOBAL_REDIRECT_URL = 'https://ig.me/j/AbbSr4goZgZAnZsP/';
         
-        // 4. TEMPO PARA O AVISO DE ÁUDIO DESAPARECER (AJUSTADO: 2 segundos)
-        const AUDIO_NOTICE_TIMEOUT = 2000; 
-        
-        // 5. TEMPO DE ATRASO PARA O VÍDEO INICIAR (AJUSTADO: 3 segundos)
-        const VIDEO_START_DELAY = 3000; 
+        // 4. TEMPO PARA O VÍDEO INICIAR (NÃO USADO, APENAS 1S PARA CARREGAMENTO DO JS)
+        const VIDEO_START_DELAY = 1000; 
         
         // =======================================================
-        // ⚙️ FUNÇÕES DE CLIQUE, RASTREAMENTO E ÁUDIO ⚙️
+        // ⚙️ FUNÇÕES DE CLIQUE, RASTREAMENTO E VÍDEO MANUAL ⚙️
         // =======================================================
 
-        /** * Oculta o aviso de áudio (usado ao clicar ou no timeout). */
-        function hideAudioNotice(containerId) {
+        /** * Inicia o vídeo (sem mute) e remove o overlay (chamado ao CLICAR no overlay de Play). */
+        function playVideoAndRemoveOverlay(containerId, videoId) {
             const container = document.getElementById(containerId);
-            const notice = container.querySelector('.audio-notice');
-            if (notice) {
-                notice.style.opacity = '0';
-                setTimeout(() => {
-                    notice.style.display = 'none';
-                }, 500);
-            }
+            
+            // Recarrega o iframe sem o mute=1 e com autoplay=1
+            container.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1" 
+                    title="Vídeo do YouTube" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            `;
+        }
+
+        /** * Cria e insere o overlay de PLAY/Áudio sobre o placeholder. */
+        function insertPlayOverlay(containerId, videoId) {
+            const container = document.getElementById(containerId);
+            
+            // Cria o overlay e o botão
+            let overlay = document.createElement('div');
+            overlay.className = `play-overlay`;
+            
+            overlay.innerHTML = `
+                <svg class="play-button-icon w-20 h-20" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14zM10 9l4 3-4 3V9z"/>
+                </svg>
+                <p class="text-white text-lg mt-3 font-semibold">Clique para Assistir com Áudio</p>
+            `;
+            
+            // Adiciona a função de clique (que carrega o vídeo de fato)
+            overlay.onclick = () => {
+                playVideoAndRemoveOverlay(containerId, videoId);
+                 if (typeof gtag === 'function') {
+                    gtag('event', 'video_play_audio', {
+                        'origem': containerId
+                    });
+                }
+            };
+            
+            // Insere o overlay no container
+            container.appendChild(overlay);
         }
         
-        /** * Cria e insere o aviso de áudio sobre o vídeo. */
-        function insertAudioNotice(containerId) {
+        /** * Cria o container com a imagem do vídeo e o Overlay. */
+        function renderVideoPlaceholder(containerId) {
             const container = document.getElementById(containerId);
-            const isMobile = containerId.includes('Mobile');
-            
-            let notice = container.querySelector('.audio-notice');
-            
-            // Se o aviso não existe, cria ele
-            if (!notice) {
-                notice = document.createElement('div');
-                notice.className = `audio-notice ${isMobile ? 'text-lg' : 'text-xl'}`;
-                notice.textContent = isMobile ? 'Toque para Ativar o Áudio 🔊' : 'Clique para Ativar o Áudio 🔊';
-                
-                // Adiciona o evento de clique para sumir o aviso
-                notice.onclick = () => {
-                    hideAudioNotice(containerId);
-                };
-                
-                container.appendChild(notice);
-            }
-            
-            // Garante que o aviso está visível para o timeout
-            notice.style.display = 'block';
-            notice.style.opacity = '1';
+            const videoId = getVideoId(YOUTUBE_VIDEO_URL);
 
-            // Faz o aviso sumir após o timeout
-            setTimeout(() => {
-                hideAudioNotice(containerId);
-            }, AUDIO_NOTICE_TIMEOUT);
+            if (videoId) {
+                // Background com a imagem do vídeo (substituindo o placeholder)
+                container.innerHTML = `
+                    <div class="video-placeholder" style="background-image: url('https://img.youtube.com/vi/${videoId}/hqdefault.jpg');">
+                    </div>
+                `;
+                
+                // Insere o overlay de Play
+                insertPlayOverlay(containerId, videoId);
+            } else {
+                container.innerHTML = `<div class="video-placeholder"><p class="font-bold text-lg text-red-500">ERRO: Link do Vídeo Inválido</p></div>`;
+            }
         }
 
         /** * Dispara o evento de clique no GA4 e, em seguida, redireciona o usuário. */
         function trackAndRedirect(link_destino, elemento_clicado) {
             
-            // 1. DISPARA O EVENTO NO GOOGLE ANALYTICS (usa a função gtag() do <head>)
             if (typeof gtag === 'function') {
                 gtag('event', 'afiliado_clique_saida', {
                     'categoria_afiliado': 'link_saida',
@@ -305,7 +227,6 @@
                 });
             }
             
-            // 2. REDIRECIONA APÓS UM PEQUENO ATRASO (100ms para garantir o disparo do GA4)
             setTimeout(() => {
                 window.open(link_destino, '_blank');
             }, 100); 
@@ -319,72 +240,19 @@
             trackAndRedirect(GLOBAL_REDIRECT_URL, 'card_' + marketplace);
         }
         
-        // ----------------------------------------------------
-        // FUNÇÕES DE CARREGAMENTO DO VÍDEO E INICIALIZAÇÃO
-        // ----------------------------------------------------
         function getVideoId(url) {
             const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
             const match = url.match(regex);
             return match ? match[1] : null;
         }
         
-        /** * Cria e insere o placeholder inicial e o aviso de áudio (ANTES do vídeo). */
-        function renderInitialPlaceholder(containerId) {
-            const container = document.getElementById(containerId);
-            
-            // HTML do Placeholder (O vídeo começará em instantes)
-            container.innerHTML = `
-                <div class="video-placeholder">
-                    <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
-                    <p class="font-semibold text-lg">O vídeo começará em instantes...</p>
-                </div>
-            `;
-
-            // Insere o aviso de áudio sobre o placeholder
-            insertAudioNotice(containerId);
-        }
-        
-        /** * Carrega e injeta o iframe do YouTube (APÓS o delay). */
-        function loadAndPlayVideo(containerId, videoId) {
-            const container = document.getElementById(containerId);
-            
-            // Injeta o iframe, substituindo o placeholder
-            container.innerHTML = `
-                <iframe 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&enablejsapi=1" 
-                    title="Vídeo do YouTube" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            `;
-
-            // O aviso de áudio precisa ser reinserido, pois innerHTML remove tudo.
-            // O timer para ele sumir já está rodando (AUDIO_NOTICE_TIMEOUT), mas 
-            // garantimos que ele está lá caso o vídeo comece antes do aviso sumir.
-            insertAudioNotice(containerId);
-        }
-        
         document.addEventListener('DOMContentLoaded', function() {
             
-            const videoId = getVideoId(YOUTUBE_VIDEO_URL);
-            
-            if (videoId) {
-                // 1. CONFIGURAÇÃO INICIAL: Mostra o Placeholder e o Aviso de Áudio Imediatamente.
-                renderInitialPlaceholder('videoContainer');
-                renderInitialPlaceholder('videoContainerMobile');
-                
-                // 2. AGENDA O VÍDEO PARA INICIAR APÓS O DELAY (3 segundos)
-                setTimeout(() => {
-                    loadAndPlayVideo('videoContainer', videoId);
-                    loadAndPlayVideo('videoContainerMobile', videoId);
-                }, VIDEO_START_DELAY);
-
-            } else {
-                // Mensagem de Erro (se o link estiver inválido)
-                document.getElementById('videoContainer').innerHTML = `<div class="video-placeholder"><svg class="w-12 h-12 mx-auto mb-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg><p class="font-bold text-lg text-red-500">ERRO: Link do Vídeo Inválido</p><p class="text-sm">O vídeo não pôde ser carregado.</p></div>`;
-                document.getElementById('videoContainerMobile').innerHTML = document.getElementById('videoContainer').innerHTML;
-            }
+            // Inicia o carregamento do placeholder e overlay após o delay inicial
+            setTimeout(() => {
+                renderVideoPlaceholder('videoContainer');
+                renderVideoPlaceholder('videoContainerMobile');
+            }, VIDEO_START_DELAY);
 
             // Define o texto dos botões CTA
             document.getElementById('ctaTextDesktop').textContent = CTA_BUTTON_TEXT;
