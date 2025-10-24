@@ -57,7 +57,25 @@
             border-radius: 10px;
         }
         
-        /* Estilos dos Cards */
+        /* NOVO CSS: Aviso de Áudio Flutuante */
+        .audio-notice {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10; /* Fica acima do iframe */
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: opacity 0.5s ease-out;
+        }
+
+        /* Estilos dos Cards (inalterados) */
         .card-hover {
             transition: all 0.3s ease;
             cursor: pointer;
@@ -68,7 +86,7 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
         
-        /* Estilos do Botão CTA (Call to Action) */
+        /* Estilos do Botão CTA (inalterados) */
         .cta-button {
             background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             transition: all 0.3s ease;
@@ -98,7 +116,7 @@
                 0 0 0 4px rgba(249, 115, 22, 0.2);
         }
         
-        /* Estilos do Texto CTA */
+        /* Estilos do Texto CTA (inalterados) */
         .cta-text {
             display: inline-block;
         }
@@ -116,6 +134,9 @@
                 </div>
                 
                 <div class="video-container mb-4" id="videoContainer">
+                    <div class="audio-notice text-xl" onclick="hideAudioNotice('videoContainer')">
+                        Clique para Ativar o Áudio 🔊
+                    </div>
                     <div class="video-placeholder">
                         <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
                         <p class="font-semibold text-lg">Carregando vídeo...</p>
@@ -171,6 +192,9 @@
             </div>
             
             <div class="video-container mb-4" id="videoContainerMobile">
+                 <div class="audio-notice text-lg" onclick="hideAudioNotice('videoContainerMobile')">
+                    Toque para Ativar o Áudio 🔊
+                </div>
                 <div class="video-placeholder">
                     <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.55 4.55a1 1 0 010 1.41l-4.55 4.55a1 1 0 01-1.41 0L10 16m-4 0l-4.55-4.55a1 1 0 010-1.41L5.99 5.99a1 1 0 011.41 0L12 10m-2 6l4-4"></path></svg>
                     <p class="font-semibold text-lg">Carregando vídeo...</p>
@@ -224,26 +248,38 @@
         // 🚨 CONFIGURAÇÃO DA CAMPANHA 🚨
         // =======================================================
         
-        // 2. LINK DO VÍDEO NO YOUTUBE
+        // 1. LINK DO VÍDEO NO YOUTUBE
         const YOUTUBE_VIDEO_URL = 'https://youtube.com/shorts/FpK3aztWTLU'; 
         
-        // 3. TEXTO QUE APARECERÁ NO BOTÃO DE CHAMADA PARA AÇÃO (CTA)
+        // 2. TEXTO QUE APARECERÁ NO BOTÃO DE CHAMADA PARA AÇÃO (CTA)
         const CTA_BUTTON_TEXT = 'Quero meu cupom de Desconto AGORA!';
         
-        // 4. LINK DE REDIRECIONAMENTO ÚNICO PARA TODOS OS BOTÕES E CARDS (Instagram)
+        // 3. LINK DE REDIRECIONAMENTO ÚNICO PARA TODOS OS BOTÕES E CARDS (Instagram)
         const GLOBAL_REDIRECT_URL = 'https://ig.me/j/AbbSr4goZgZAnZsP/';
         
-        // =======================================================
-        // ⚙️ FUNÇÕES DE CLIQUE E RASTREAMENTO ⚙️
-        // =======================================================
+        // 4. TEMPO PARA O AVISO DE ÁUDIO DESAPARECER (em milissegundos)
+        const AUDIO_NOTICE_TIMEOUT = 5000; // 5 segundos
         
-        /** * Dispara o evento de clique no GA4 e, em seguida, redireciona o usuário.
-         * O evento 'afiliado_clique_saida' será enviado ao GA4 com o elemento clicado.
-         */
+        // =======================================================
+        // ⚙️ FUNÇÕES DE CLIQUE, RASTREAMENTO E ÁUDIO ⚙️
+        // =======================================================
+
+        /** * Oculta o aviso de áudio. */
+        function hideAudioNotice(containerId) {
+            const container = document.getElementById(containerId);
+            const notice = container.querySelector('.audio-notice');
+            if (notice) {
+                notice.style.opacity = '0';
+                setTimeout(() => {
+                    notice.style.display = 'none';
+                }, 500); // Espera a transição de opacidade
+            }
+        }
+        
+        /** * Dispara o evento de clique no GA4 e, em seguida, redireciona o usuário. */
         function trackAndRedirect(link_destino, elemento_clicado) {
             
             // 1. DISPARA O EVENTO NO GOOGLE ANALYTICS
-            // Usamos gtag() que foi definido no <head>
             if (typeof gtag === 'function') {
                 gtag('event', 'afiliado_clique_saida', {
                     'categoria_afiliado': 'link_saida',
@@ -279,9 +315,19 @@
             const videoId = getVideoId(url);
             
             if (videoId) {
+                // Remove o aviso de áudio que está no HTML, se ele existir
+                const audioNotice = container.querySelector('.audio-notice');
+                if (audioNotice) {
+                    audioNotice.remove();
+                }
+
+                // Injeta o iframe, que é o que o usuário vai interagir
                 container.innerHTML = `
+                    <div class="audio-notice text-lg" onclick="hideAudioNotice('${containerId}')">
+                        ${containerId.includes('Mobile') ? 'Toque para Ativar o Áudio 🔊' : 'Clique para Ativar o Áudio 🔊'}
+                    </div>
                     <iframe 
-                        src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}" 
+                        src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&enablejsapi=1" 
                         title="Vídeo do YouTube" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -297,6 +343,12 @@
                     </div>
                 `;
             }
+            
+            // Ativa o timeout para sumir o aviso
+            setTimeout(() => {
+                hideAudioNotice(containerId);
+            }, AUDIO_NOTICE_TIMEOUT);
+
         }
         
         document.addEventListener('DOMContentLoaded', function() {
